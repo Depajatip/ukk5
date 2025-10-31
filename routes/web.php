@@ -11,11 +11,22 @@ use App\Http\Controllers\Admin\ProductController;
 //     return view('welcome');
 // });
 
+// Route::get('/', function () {
+//     if (Auth::check()) {
+//         return redirect()->route('dashboard'); // atau admin/kasir sesuai role
+//     }
+//     return redirect()->route('login');
+// });
+
 Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect()->route('dashboard'); // atau admin/kasir sesuai role
+    if (!Auth::check()) {
+        return redirect()->route('login');
     }
-    return redirect()->route('login');
+
+    $role = Auth::user()->role;
+    return $role === 'admin'
+        ? redirect()->route('admin.dashboard')
+        : redirect()->route('kasir.dashboard');
 });
 
 // Route::get('/dashboard', function () {
@@ -64,5 +75,5 @@ Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('
     //     ->name('admin.products.index');
     Route::get('/kasir/dashboard', [KasirDashboardController::class, 'index'])
         ->name('kasir.dashboard')
-        ->middleware('role:kasir');
+        ->middleware('role:cashier');
 });

@@ -107,7 +107,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
       <!-- Brand Logo -->
       <a href="dashboard" class="brand-link text-center">
         <!-- <img src="public/adminlte/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
-        <span class="brand-text font-weight-light">KasisSystem</span>
+        <span class="brand-text font-weight-light">halaman kasir</span>
       </a>
 
       <!-- Sidebar -->
