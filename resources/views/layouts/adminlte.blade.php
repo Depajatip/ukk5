@@ -17,6 +17,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{ asset('adminlte') }}/plugins/fontawesome-free/css/all.min.css">
   <!-- Theme style -->
   <link rel="stylesheet" href="{{ asset('adminlte') }}/dist/css/adminlte.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
   <!-- @vite('resources/js/app.js') -->
 </head>
@@ -148,10 +149,11 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <p>Manage Product</p>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a href="#" class="nav-link">
+                <li class="nav-item {{ request()->routeIs('admin.listTransaksi') ? 'active' : '' }}">
+                  <a href="{{ route('admin.listTransaksi') }}"
+                    class="nav-link {{ request()->routeIs('admin.listTransaksi') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Data Pesanan</p>
+                    <p>Riwayat Transaksi</p>
                   </a>
                 </li>
                 <li class="nav-item">

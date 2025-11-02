@@ -35,7 +35,7 @@ class ProductController extends Controller
             'category' => $request->category,
             'stock' => $request->stock,
             'harga' => $request->harga,
-            'image' => $imagePath, // simpan path gambar
+            'image' => $imagePath, 
         ]);
 
 

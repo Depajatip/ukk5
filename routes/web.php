@@ -4,7 +4,9 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\admin\TransaksiController as AdminTransaksiController;
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
+use App\Http\Controllers\Kasir\OrderMenuController as KasirorderMenuController;
 use App\Http\Controllers\Admin\ProductController;
 
 // Route::get('/', function () {
@@ -55,13 +57,16 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/manageProduct', [AdminProductController::class, 'manageProduct'])
         ->name('admin.manageProduct')
         ->middleware('role:admin');
+    Route::get('/admin/listTransaksi', [AdminTransaksiController::class, 'listTransaksi'])
+        ->name('admin.listTransaksi')
+        ->middleware('role:admin');
     Route::post('/admin/products', [AdminProductController::class, 'store'])
         ->name('admin.products.store');
-    
+
     Route::delete('/admin/products/{id}', [AdminProductController::class, 'destroyProduct'])
         ->name('admin.product.destroy');
 
-Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.product.update');
+    Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.product.update');
 
     Route::get('/admin/user/{id}/edit', [AdminDashboardController::class, 'editUser'])
         ->name('admin.user.edit');
@@ -75,5 +80,8 @@ Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('
     //     ->name('admin.products.index');
     Route::get('/kasir/dashboard', [KasirDashboardController::class, 'index'])
         ->name('kasir.dashboard')
+        ->middleware('role:cashier');
+    Route::get('/kasir/orderMenu', [KasirorderMenuController::class, 'index'])
+        ->name('kasir.orderMenu')
         ->middleware('role:cashier');
 });
