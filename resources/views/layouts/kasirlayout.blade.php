@@ -148,22 +148,10 @@
                     <p>Order Menu</p>
                   </a>
                 </li>
-                <li class="nav-item {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
-                  <a href="{{ route('admin.manageProduct') }}" class="nav-link {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Manage Product</p>
-                  </a>
-                </li>
                 <li class="nav-item">
                   <a href="#" class="nav-link">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Data Pesanan</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="#" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Dashboard</p>
+                    <p>List Pesanan</p>
                   </a>
                 </li>
               </ul>

@@ -69,13 +69,15 @@
                                         <td class="text-center">Rp {{ number_format($product->harga, 0, ',', '.') }}</td>
                                         <td class="text-center">
                                             <a href="#" class="btn btn-sm btn-primary edit-btn"
-                                                   data-produkiD="{{ $product->produkID }}"
+   data-produkid="{{ $product->produkID }}"
    data-nama-produk="{{ $product->namaProduk }}"
    data-category="{{ $product->category }}"
    data-harga="{{ $product->harga }}"
-   data-stock="{{ $product->stock }}" title="Edit">
-                                                <i class="fa fa-edit"></i>
-                                            </a>
+   data-stock="{{ $product->stock }}"
+   data-image="{{ $product->image }}"
+   title="Edit">
+   <i class="fa fa-edit"></i>
+</a>
                                             <form id="deleteProductForm{{ $product->produkID }}"
                                                 action="{{ route('admin.product.destroy', $product->produkID) }}" method="POST"
                                                 style="display:inline;">
@@ -103,27 +105,33 @@
                     });
                 });
                 $(document).ready(function () {
-                    // Isi modal saat tombol edit diklik
-                    $('.edit-btn').on('click', function () {
-                        const produkID = $(this).data('produkid');
-                        const namaProduk = $(this).data('namaProduk');
-                        const category = $(this).data('category');
-                        const harga = $(this).data('harga');
-                        const stock = $(this).data('stock');
-                        // const image = $(this).data('image');
+    $('.edit-btn').on('click', function () {
+        const produkID = $(this).data('produkid');
+        const namaProduk = $(this).data('nama-produk'); // perhatikan: gunakan nama yg sama persis seperti di HTML
+        const category = $(this).data('category');
+        const harga = $(this).data('harga');
+        const stock = $(this).data('stock');
+        const image = $(this).data('image');
 
-                        $('#edit_product_id').val(produkID);
-                        $('#edit_namaProduk').val(namaProduk);
-                        $('#edit_category').val(category);
-                        $('#edit_harga').val(harga);
-                        $('#edit_stock').val(stock);
-                        // $('#edit_image').val(image);
+        // Isi field
+        $('#edit_product_id').val(produkID);
+        $('#edit_namaProduk').val(namaProduk);
+        $('#edit_category').val(category);
+        $('#edit_harga').val(harga);
+        $('#edit_stock').val(stock);
 
+        // Tampilkan pratinjau gambar lama
+        if (image) {
+            $('#preview_image').attr('src', '/storage/' + image).show();
+        } else {
+            $('#preview_image').hide();
+        }
 
-                       $('#editProductForm').attr('action', '/admin/products/' + produkID);
-                        $('#editProductModal').modal('show');
-                    });
-                });
+        // Set form action
+        $('#editProductForm').attr('action', '/admin/products/' + produkID);
+        $('#editProductModal').modal('show');
+    });
+});
             </script>
 
         @endpush
@@ -264,11 +272,12 @@
                                         </div>
                                     </div>
                                     <div class="col">
-                                        <div class="form-group mb-3">
-                                            <label for="edit_image">Masukan Gambar Produk</label>
-                                            <input type="file" name="image" id="edit_image" class="form-control" accept="image/*">
-                                            <small class="text-muted">Format: JPG, PNG, WEBP. Maksimal 2MB.</small>
-                                        </div>
+<div class="form-group mb-3">
+    <label for="edit_image">Masukan Gambar Produk</label>
+    <input type="file" name="image" id="edit_image" class="form-control" accept="image/*">
+    <!-- <img id="preview_image" src="" alt="Preview Gambar" class="mt-2" style="max-width: 100px; display: none;"> -->
+    <small class="text-muted">Format: JPG, PNG, WEBP. Maksimal 2MB.</small>
+</div>
                                     </div>
                                 </div>
                             </div>

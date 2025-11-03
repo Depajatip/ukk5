@@ -46,16 +46,40 @@ class ProductController extends Controller
         Product::findOrFail($produkID)->delete();
         return redirect()->route('admin.manageProduct')->with('success', 'Product berhasil dihapus');
     }
-    public function update(Request $request, $produkID)
+public function update(Request $request, $produkID)
 {
     $product = Product::findOrFail($produkID);
+
+    // Validasi data
+    $request->validate([
+        'namaProduk' => 'required|string|max:255',
+        'category'   => 'required|string|max:255',
+        'harga'      => 'required|numeric|min:0',
+        'stock'      => 'required|integer|min:0',
+        'image'      => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+    ]);
+
+    // Update data biasa
     $product->namaProduk = $request->namaProduk;
     $product->category = $request->category;
     $product->harga = $request->harga;
     $product->stock = $request->stock;
+
+    // Kalau user upload gambar baru
+    if ($request->hasFile('image')) {
+        // Hapus gambar lama kalau ada
+        if ($product->image && file_exists(public_path('storage/' . $product->image))) {
+            unlink(public_path('storage/' . $product->image));
+        }
+
+        // Simpan file baru ke storage/app/public/products
+        $path = $request->file('image')->store('products', 'public');
+        $product->image = $path;
+    }
+
     $product->save();
 
-    return redirect()->route('admin.manageProduct')->with('success', 'Product berhasil diupdate');
+    return redirect()->route('admin.manageProduct')->with('success', 'Produk berhasil diperbarui!');
 }
 
 }
