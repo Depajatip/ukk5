@@ -363,7 +363,7 @@
                         successModal.hide();
                     }, 2000);
                 });
-            </script>0000000000000000000000000000000000000
+            </script>
         @endif
     </section>
 @endsection

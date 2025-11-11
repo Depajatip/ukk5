@@ -380,7 +380,6 @@ $(document).on('click', '.remove-btn', function(e) {
             item.style.display = name.includes(query) ? 'block' : 'none';
         });
     });
-//tomvol order
 $('#place-order').on('click', function() {
     if (cart.length === 0) {
         alert('Keranjang kosong!');
@@ -412,19 +411,44 @@ $('#place-order').on('click', function() {
         return;
     }
 
-    // ✅ Tampilkan modal sukses
-    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-    successModal.show();
+    // ✅ Kirim data ke backend
+    $.ajax({
+        url: "{{ route('kasir.orderMenu.store') }}",
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        data: {
+            namaPelanggan: name,
+            alamat: addr,
+            noTelpPelanggan: phone,
+            cart: cart.map(item => ({
+                id: item.id,
+                quantity: item.quantity
+            }))
+        },
+        success: function(res) {
+            if (res.success) {
+                // ✅ Tampilkan modal sukses
+                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+                successModal.show();
 
-    // ✅ Reset setelah modal ditutup (opsional)
-    $('#successModal').one('hidden.bs.modal', function () {
-        // Reset keranjang & form
-        cart = [];
-        updateCart();
-        $('#customer-name, #customer-phone, #customer-address').val('');
-
-        // 🔁 Opsi: Redirect ke halaman baru, atau cetak struk, dll
-        // window.location.href = '/kasir/new';
+                // Reset setelah modal ditutup
+                $('#successModal').one('hidden.bs.modal', function () {
+                    cart = [];
+                    updateCart();
+                    $('#customer-name, #customer-phone, #customer-address').val('');
+                    
+                    // Redirect ke halaman list pesanan
+                    window.location.href = res.redirect;
+                });
+            } else {
+                alert('Gagal menyimpan order: ' + res.error);
+            }
+        },
+        error: function(xhr) {
+            alert('Terjadi kesalahan: ' + xhr.responseJSON?.error || 'Coba lagi nanti.');
+        }
     });
 });
 </script>

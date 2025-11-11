@@ -85,7 +85,9 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/kasir/orderMenu', [KasirorderMenuController::class, 'index'])
         ->name('kasir.orderMenu')
         ->middleware('role:cashier');
-        Route::get('/kasir/listPesanan', [KasirlistPesananController::class, 'index'])
-        ->name('kasir.listPesanan')
-        ->middleware('role:cashier');
+    Route::get('/kasir/listPesanan', [KasirlistPesananController::class, 'index'])
+    ->name('kasir.listPesanan')
+    ->middleware('role:cashier');
+    Route::post('/kasir/orderMenu', [KasirorderMenuController::class, 'store'])
+    ->name('kasir.orderMenu.store');
 });

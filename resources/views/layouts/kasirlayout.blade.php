@@ -148,10 +148,22 @@
                     <p>Order Menu</p>
                   </a>
                 </li>
-                <li class="nav-item {{ request()->routeIs('kasir.listPesanan') ? 'active' : '' }}">
-                  <a href="{{ route('kasir.listPesanan') }}" class="nav-link {{ request()->routeIs('kasir.listPesanan') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
+                  <a href="{{ route('admin.manageProduct') }}" class="nav-link {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>List Pesanan</p>
+                    <p>Manage Product</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Data Pesanan</p>
+                  </a>
+                </li>
+                <li class="nav-item">
+                  <a href="#" class="nav-link">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Dashboard</p>
                   </a>
                 </li>
               </ul>
