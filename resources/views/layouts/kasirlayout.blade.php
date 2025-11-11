@@ -148,8 +148,8 @@
                     <p>Order Menu</p>
                   </a>
                 </li>
-                <li class="nav-item">
-                  <a href="#" class="nav-link">
+                <li class="nav-item {{ request()->routeIs('kasir.listPesanan') ? 'active' : '' }}">
+                  <a href="{{ route('kasir.listPesanan') }}" class="nav-link {{ request()->routeIs('kasir.listPesanan') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>List Pesanan</p>
                   </a>

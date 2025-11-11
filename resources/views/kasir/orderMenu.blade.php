@@ -56,29 +56,45 @@
             <!-- Daftar Menu -->
             <div class="row" id="menu-list">
                 @foreach($products as $product)
-                    <div class="col-md-3 col-sm-6 product-item mb-3" data-category="{{ $product->category }}"
-                        data-name="{{ $product->namaProduk }}">
-                        <div class="card h-100">
-                            <div class="card-body d-flex flex-column">
-                                <div class="bg-secondary d-flex justify-content-center align-items-center"
-                                    style="height: 150px; border-radius: 8px;">
-                                    @if($product->image)
-                                        <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->namaProduk }}"
-                                            class="img-fluid rounded" style="max-height: 100%; max-width: 100%;">
-                                    @else
-                                        <span class="text-white">No Image</span>
-                                    @endif
-                                </div>
-                                <h5 class="mt-3">{{ $product->namaProduk }}</h5>
-                                <p class="text-muted mb-3">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
-                                <button class="btn btn-warning btn-sm mt-auto add-to-cart" data-id="{{ $product->produkID }}"
-                                                data-name="{{ $product->namaProduk }}"
-                                                data-price="{{ $product->harga }}">
-                                            Masukan Keranjang <i class="fas fa-shopping-cart ms-1"></i>
-                                </button>
+                <div class="col-md-3 col-sm-6 product-item mb-3" data-category="{{ $product->category }}" data-name="{{ $product->namaProduk }}" data-id="{{ $product->produkID }}">
+                    <div class="card h-100">
+                        <div class="card-body d-flex flex-column">
+                            <div class="bg-secondary d-flex justify-content-center align-items-center"
+                                style="height: 150px; border-radius: 8px;">
+                                @if($product->image)
+                                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->namaProduk }}"
+                                    class="img-fluid rounded" style="max-height: 100%; max-width: 100%;">
+                                @else
+                                <span class="text-white">No Image</span>
+                                @endif
                             </div>
+                            <h5 class="mt-3">{{ $product->namaProduk }}</h5>
+                            <p class="text-muted mb-1">Rp {{ number_format($product->harga, 0, ',', '.') }}</p>
+
+                            {{-- ✅ Tampilan Stock --}}
+                            <p class="mb-3">
+                                @if($product->stock > 0)
+                                <span class="badge stock-badge {{ $product->stock > 0 ? 'bg-success' : 'bg-danger' }}"
+                                    data-product-id="{{ $product->produkID }}"> {{-- opsional tapi bagus --}}
+                                    @if($product->stock > 0)
+                                    <i class="fas fa-box me-1"></i> Stock: {{ $product->stock }}
+                                    @else
+                                    <i class="fas fa-times me-1"></i> Habis
+                                    @endif
+                                </span>
+                                @endif
+                            </p>
+
+                            <button class="btn btn-warning btn-sm mt-auto add-to-cart"
+                                data-id="{{ $product->produkID }}"
+                                data-name="{{ $product->namaProduk }}"
+                                data-price="{{ $product->harga }}"
+                                {{ $product->stock <= 0 ? 'disabled' : '' }}>
+                                Masukan Keranjang <i class="fas fa-shopping-cart ms-1"></i>
+                            </button>
                         </div>
                     </div>
+                </div>
                 @endforeach
             </div>
         </div>
@@ -119,7 +135,7 @@
                 <hr>
 
                 <div class="d-flex justify-content-between align-items-center p-3 bg-orange rounded"
-                     style="background-color: #FF7A00; color: white;">
+                    style="background-color: #FF7A00; color: white;">
                     <div>
                         <span id="total-items">0</span> Items<br>
                         <strong>Rp <span id="total-price">0</span></strong>
@@ -133,102 +149,206 @@
 
 @push('scripts')
 <script>
-    // Data keranjang
     let cart = [];
 
-    // Fungsi tambah ke keranjang
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-        button.addEventListener('click', function () {
-            const id = String(this.dataset.id);
-            const name = this.dataset.name;
-            const price = parseFloat(this.dataset.price);
-
-            const existing = cart.find(item => item.id === String(id));
-            if (existing) {
-                existing.quantity += 1;
-            } else {
-                cart.push({
-                    id: String(id),
-                    name: name,
-                    price: price,
-                    quantity: 1
-                });
-            }
-
-            updateCart();
-        });
-    });
-
-    // Fungsi update tampilan keranjang
-    function updateCart() {
-        const orderList = document.getElementById('order-list');
-        const totalItems = document.getElementById('total-items');
-        const totalPrice = document.getElementById('total-price');
-
-        if (cart.length === 0) {
-            orderList.innerHTML = '<div class="alert alert-info text-center">Belum ada pesanan.</div>';
-            totalItems.textContent = '0';
-            totalPrice.textContent = '0';
+    // ✅ Update UI stock berdasarkan productId & newStock
+    function updateProductStockUI(productId, newStock) {
+        const $card = $(`.product-item[data-id="${productId}"]`);
+        if ($card.length === 0) {
+            console.warn(`Product card with id=${productId} not found!`);
             return;
         }
 
-        let html = '';
-        let total = 0;
-        let itemCount = 0;
+        const $badge = $card.find('.stock-badge');
+        const $btn = $card.find('.add-to-cart');
 
-        cart.forEach(item => {
-            const subtotal = item.price * item.quantity;
-            total += subtotal;
-            itemCount += item.quantity;
-
-            html += `
-            <div class="order-item d-flex align-items-center justify-content-between p-3 mb-2 bg-white rounded shadow-sm">
-                <div class="d-flex align-items-center">
-                    <div class="bg-secondary d-flex justify-content-center align-items-center" style="width: 50px; height: 50px; border-radius: 8px; margin-right: 10px;">
-                        <i class="fas fa-hamburger text-white"></i>
-                    </div>
-                    <div>
-                        <div>${item.name}</div>
-                        <div class="text-muted">Rp ${item.price.toLocaleString()}</div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-center">
-                    <button class="btn btn-sm btn-outline-danger minus-btn" data-id="${item.id}">-</button>
-                    <span class="mx-2">${item.quantity}</span>
-                    <button class="btn btn-sm btn-outline-success plus-btn" data-id="${item.id}">+</button>
-                </div>
-            </div>`;
-        });
-
-        orderList.innerHTML = html;
-        totalItems.textContent = itemCount;
-        totalPrice.textContent = total.toLocaleString();
-
-        // Event listener untuk tombol +/- di keranjang
-        document.querySelectorAll('.minus-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const id = String(this.dataset.id);
-                const item = cart.find(item => item.id === id);
-                if (item.quantity > 1) {
-                    item.quantity -= 1;
-                } else {
-                    cart = cart.filter(item => item.id !== id);
-                }
-                updateCart();
-            });
-        });
-
-        document.querySelectorAll('.plus-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const id = String(this.dataset.id);
-                const item = cart.find(item => item.id === id);
-                item.quantity += 1;
-                updateCart();
-            });
-        });
+        if (newStock > 0) {
+            $badge.removeClass('bg-danger').addClass('bg-success')
+                .html(`<i class="fas fa-box me-1"></i> Stock: ${newStock}`);
+            $btn.prop('disabled', false);
+        } else {
+            $badge.removeClass('bg-success').addClass('bg-danger')
+                .html(`<i class="fas fa-times me-1"></i> Habis`);
+            $btn.prop('disabled', true);
+        }
     }
 
-    // Filter kategori
+    // ✅ Event delegation untuk +/- (aman, hanya sekali)
+    $(document).on('click', '.plus-btn, .minus-btn', function() {
+        const id = String($(this).data('id'));
+        const isPlus = $(this).hasClass('plus-btn');
+        const itemIndex = cart.findIndex(it => it.id === id);
+
+        if (itemIndex === -1) return;
+
+        if (isPlus) {
+            // Tambah qty → kurangi stock
+            cart[itemIndex].quantity += 1;
+            const $badge = $(`.product-item[data-id="${id}"] .stock-badge`);
+            const currentStock = parseInt($badge.text().match(/\d+/)?.[0] || 0);
+            updateProductStockUI(id, currentStock - 1);
+        } else {
+            // Kurangi qty
+            if (cart[itemIndex].quantity > 1) {
+                cart[itemIndex].quantity -= 1;
+                const $badge = $(`.product-item[data-id="${id}"] .stock-badge`);
+                const currentStock = parseInt($badge.text().match(/\d+/)?.[0] || 0);
+                updateProductStockUI(id, currentStock + 1);
+            } else {
+                // Hapus item → restore stock ke nilai awal
+                const initialStock = $(`.product-item[data-id="${id}"]`).data('initial-stock') || 0;
+                updateProductStockUI(id, initialStock);
+                cart.splice(itemIndex, 1);
+            }
+        }
+
+        updateCart();
+    });
+
+    // ✅ Event untuk "Masukan Keranjang"
+    $(document).on('click', '.add-to-cart', function() {
+        const id = String($(this).data('id'));
+        const name = $(this).data('name');
+        const price = parseFloat($(this).data('price'));
+        const image = $(this).closest('.product-item').find('img').attr('src') || null;
+
+        const $card = $(`.product-item[data-id="${id}"]`);
+        const $badge = $card.find('.stock-badge');
+        const currentStock = parseInt($badge.text().match(/\d+/)?.[0] || 0);
+
+        if (currentStock <= 0) {
+            alert('Stok habis!');
+            return;
+        }
+
+        // ✅ Kurangi stock di UI
+        updateProductStockUI(id, currentStock - 1);
+
+        // Tambah ke keranjang
+        const existing = cart.find(item => item.id === id);
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({
+                id,
+                name,
+                price,
+                quantity: 1,
+                image: image
+            });
+        }
+
+        updateCart();
+    });
+
+    // ✅ Render keranjang (tanpa event dalam loop!)
+    function updateCart() {
+    const $orderList = $('#order-list');
+    const $totalItems = $('#total-items');
+    const $totalPrice = $('#total-price');
+
+    if (cart.length === 0) {
+        $orderList.html('<div class="alert alert-info text-center">Belum ada pesanan.</div>');
+        $totalItems.text('0');
+        $totalPrice.text('0');
+        return;
+    }
+
+    let html = '';
+    let total = 0;
+    let itemCount = 0;
+
+    cart.forEach(item => {
+        // ✅ Ambil current stock DARI DOM (per item, di dalam loop)
+        const $stockBadge = $(`.product-item[data-id="${item.id}"] .stock-badge`);
+        const currentStockText = $stockBadge.text();
+        const currentStock = parseInt(currentStockText.match(/\d+/)?.[0] || 0);
+        const plusDisabled = currentStock <= 0 ? 'disabled' : '';
+
+        const subtotal = item.price * item.quantity;
+        total += subtotal;
+        itemCount += item.quantity;
+
+html += `
+<div class="order-item p-3 mb-2 bg-white rounded shadow-sm"
+     style="position: relative; min-height: 76px; padding-right: 40px;">
+<button class="btn btn-sm remove-btn"
+        style="position: absolute; top: 2px; right: 0px; width: 24px; height: 24px; padding: 0; font-size: 0.7rem; z-index: 5;"
+        data-id="${item.id}" title="Hapus">
+    <i class="fas fa-times"></i>
+</button>
+
+    <!-- Konten: Gambar + Nama + Harga + +/- -->
+    <div class="d-flex align-items-center">
+        <div class="mr-3 flex-shrink-0" style="width: 50px; height: 50px; border-radius: 8px; overflow: hidden;">
+    ${item.image 
+        ? `<img src="${item.image}" alt="${item.name}" class="w-100 h-100" style="object-fit: cover;">`
+        : `<div class="bg-secondary w-100 h-100 d-flex align-items-center justify-content-center">
+             <span class="text-white small">?</span>
+           </div>`
+    }
+</div>
+
+        <!-- Nama & Harga -->
+        <div class="flex-grow-1 mr-3" style="min-width: 0;">
+            <div class="font-weight-bold text-truncate">${item.name}</div>
+            <div class="text-muted small">Rp ${item.price.toLocaleString()}</div>
+        </div>
+
+        <!-- Tombol +/- -->
+        <div class="d-flex align-items-center" style="flex-shrink: 0;">
+            <button class="btn btn-sm btn-outline-danger minus-btn" data-id="${item.id}" 
+                    style="width: 28px; height: 28px; padding: 0; font-size: 0.85rem;">−</button>
+            <span class="mx-2 font-weight-bold">${item.quantity}</span>
+            <button class="btn btn-sm btn-outline-success plus-btn" data-id="${item.id}" ${plusDisabled}
+                    style="width: 28px; height: 28px; padding: 0; font-size: 0.85rem;">+</button>
+        </div>
+    </div>
+</div>`;
+    });
+
+    $orderList.html(html);
+    $totalItems.text(itemCount);
+    $totalPrice.text(total.toLocaleString());
+}
+$(document).on('click', '.remove-btn', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const id = String($(this).data('id'));
+    const itemIndex = cart.findIndex(it => it.id === id);
+
+    if (itemIndex === -1) return;
+
+    const item = cart[itemIndex];
+    const qty = item.quantity;
+
+    // ✅ Pulihkan stock
+    const $badge = $(`.product-item[data-id="${id}"] .stock-badge`);
+    const currentStock = parseInt($badge.text().match(/\d+/)?.[0] || 0);
+    updateProductStockUI(id, currentStock + qty);
+
+    // Hapus dari keranjang
+    cart.splice(itemIndex, 1);
+
+    // Refresh tampilan
+    updateCart();
+});
+
+    // ✅ Simpan initial stock saat halaman load
+    $(document).ready(function() {
+        $('.product-item').each(function() {
+            const $badge = $(this).find('.stock-badge');
+            const stockMatch = $badge.text().match(/Stock:\s*(\d+)/);
+            const initialStock = stockMatch ? parseInt(stockMatch[1]) : 0;
+            $(this).data('initial-stock', initialStock);
+        });
+
+        // Inisialisasi tampilan keranjang
+        updateCart();
+    });
+
+    // ✅ Filter & search (sama)
     document.querySelectorAll('.category-card').forEach(card => {
         card.addEventListener('click', function () {
             const selectedCategory = this.dataset.category;
@@ -260,33 +380,69 @@
             item.style.display = name.includes(query) ? 'block' : 'none';
         });
     });
+//tomvol order
+$('#place-order').on('click', function() {
+    if (cart.length === 0) {
+        alert('Keranjang kosong!');
+        return;
+    }
 
-    // Tombol Order
-    document.getElementById('place-order').addEventListener('click', function () {
-        if (cart.length === 0) {
-            alert('Keranjang kosong!');
-            return;
+    const name = $('#customer-name').val().trim();
+    const phone = $('#customer-phone').val().trim();
+    const addr = $('#customer-address').val().trim();
+
+    if (!name || !phone || !addr) {
+        alert('Silakan isi semua data pelanggan!');
+        return;
+    }
+
+    // ✅ Validasi stock akhir (opsional tapi direkomendasikan)
+    let stockIssues = [];
+    cart.forEach(item => {
+        const $badge = $(`.product-item[data-id="${item.id}"] .stock-badge`);
+        const currentStock = parseInt($badge.text().match(/\d+/)?.[0] || 0);
+        if (currentStock < 0) { // karena kita kurangi real-time, <0 = over-order
+            const productName = $(`.product-item[data-id="${item.id}"]`).data('name');
+            stockIssues.push(productName);
         }
+    });
 
-        const customerName = document.getElementById('customer-name').value.trim();
-        const customerPhone = document.getElementById('customer-phone').value.trim();
-        const customerAddress = document.getElementById('customer-address').value.trim();
+    if (stockIssues.length > 0) {
+        alert(`Stok tidak mencukupi untuk: ${stockIssues.join(', ')}`);
+        return;
+    }
 
-        if (!customerName || !customerPhone || !customerAddress) {
-            alert('Silakan isi semua data pelanggan!');
-            return;
-        }
+    // ✅ Tampilkan modal sukses
+    const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+    successModal.show();
 
-        // Simulasi order
-        alert(`Order berhasil!\n\nNama: ${customerName}\nNo Telp: ${customerPhone}\nAlamat: ${customerAddress}\nTotal: Rp ${document.getElementById('total-price').textContent}`);
-
-        // Reset
+    // ✅ Reset setelah modal ditutup (opsional)
+    $('#successModal').one('hidden.bs.modal', function () {
+        // Reset keranjang & form
         cart = [];
         updateCart();
-        document.getElementById('customer-name').value = '';
-        document.getElementById('customer-phone').value = '';
-        document.getElementById('customer-address').value = '';
+        $('#customer-name, #customer-phone, #customer-address').val('');
+
+        // 🔁 Opsi: Redirect ke halaman baru, atau cetak struk, dll
+        // window.location.href = '/kasir/new';
     });
+});
 </script>
 @endpush
+<!-- Modal Sukses -->
+        <div class="modal fade" id="successModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-custom">
+                <div class="modal-content text-center p-4" style="height: 350px;">
+                    <div class="modal-body">
+                        <!-- Ikon centang besar -->
+                        <div class="text-success mb-3">
+                            <i class="fas fa-check-circle fa-10x"></i>
+                        </div>
+                        <br>
+                        <!-- Teks sukses -->
+                        <h3 class="fw-bold">Aksi Berhasil Dilakukan</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
 @endsection

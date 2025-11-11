@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\admin\TransaksiController as AdminTransaksiController;
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
 use App\Http\Controllers\Kasir\OrderMenuController as KasirorderMenuController;
+use App\Http\Controllers\Kasir\listPesananController as KasirlistPesananController;
 use App\Http\Controllers\Admin\ProductController;
 
 // Route::get('/', function () {
@@ -83,5 +84,8 @@ Route::middleware(['auth'])->group(function () {
         ->middleware('role:cashier');
     Route::get('/kasir/orderMenu', [KasirorderMenuController::class, 'index'])
         ->name('kasir.orderMenu')
+        ->middleware('role:cashier');
+        Route::get('/kasir/listPesanan', [KasirlistPesananController::class, 'index'])
+        ->name('kasir.listPesanan')
         ->middleware('role:cashier');
 });
