@@ -4,22 +4,17 @@ namespace App\Http\Controllers\Kasir;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Product;
-
-
-namespace App\Http\Controllers\Kasir;
-
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Penjualan; // ✅ import model Penjualan
 
 class listPesananController extends Controller
 {
     public function index()
-{
-    $categories = \App\Models\Product::select('category')->distinct()->get();
+    {
+        // ✅ Ambil data penjualan + relasi pelanggan, urut terbaru
+        $penjualans = Penjualan::with('pelanggan')
+            ->latest('created_at')
+            ->get();
 
-    $products = \App\Models\Product::all();
-
-    return view('kasir.listPesanan', compact('categories', 'products'));
-}
+        return view('kasir.listPesanan', compact('penjualans'));
+    }
 }

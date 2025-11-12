@@ -5,6 +5,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <title>POS</title>
 
   <!-- Google Font -->
@@ -17,22 +18,25 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
   <style>
-.content-wrapper {
-  max-height: calc(100vh - 56px); /* navbar height */
-  overflow-y: hidden;
-  padding-bottom: 60px; /* RUANG UNTUK FOOTER */
-}
+    .content-wrapper {
+      max-height: calc(100vh - 56px);
+      /* navbar height */
+      overflow-y: hidden;
+      padding-bottom: 60px;
+      /* RUANG UNTUK FOOTER */
+    }
 
-.main-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background-color: #fff;
-  border-top: 1px solid #dee2e6;
-  padding: 0.5rem 0.5rem;
-}
+    .main-footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background-color: #fff;
+      border-top: 1px solid #dee2e6;
+      padding: 0.5rem 0.5rem;
+    }
+
     .wrapper {
       min-height: 100vh;
       display: flex;
@@ -46,7 +50,8 @@
       overflow: hidden;
     }
 
-    html, body {
+    html,
+    body {
       height: 100%;
     }
   </style>
@@ -148,22 +153,10 @@
                     <p>Order Menu</p>
                   </a>
                 </li>
-                <li class="nav-item {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
-                  <a href="{{ route('admin.manageProduct') }}" class="nav-link {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
+                <li class="nav-item {{ request()->routeIs('kasir.listPesanan') ? 'active' : '' }}">
+                  <a href="{{ route('kasir.listPesanan') }}" class="nav-link {{ request()->routeIs('kasir.listPesanan') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
-                    <p>Manage Product</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="#" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Data Pesanan</p>
-                  </a>
-                </li>
-                <li class="nav-item">
-                  <a href="#" class="nav-link">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Dashboard</p>
+                    <p>List Pesanan</p>
                   </a>
                 </li>
               </ul>

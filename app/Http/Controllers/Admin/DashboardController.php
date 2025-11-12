@@ -24,10 +24,6 @@ class DashboardController extends Controller
 
         return view('admin.manageUser', compact('users', 'totalUser', 'totalAdmin', 'totalCashier'));
     }
-    public function listPelanggan()
-    {
-        return view('admin.listPelanggan');
-    }
     // public function manageProduct()
     // {
     //     return view('admin.manageProduct');

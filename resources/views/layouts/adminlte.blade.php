@@ -135,18 +135,18 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     <p>Manage User</p>
                   </a>
                 </li>
-                <li class="nav-item {{ request()->routeIs('admin.listPelanggan') ? 'active' : '' }}">
-                  <a href="{{ route('admin.listPelanggan') }}"
-                    class="nav-link {{ request()->routeIs('admin.listPelanggan') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>List Pelanggan</p>
-                  </a>
-                </li>
                 <li class="nav-item {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
                   <a href="{{ route('admin.manageProduct') }}"
                     class="nav-link {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
                     <i class="far fa-circle nav-icon"></i>
                     <p>Manage Product</p>
+                  </a>
+                </li>
+                <li class="nav-item {{ request()->routeIs('admin.dataPelanggan') ? 'active' : '' }}">
+                  <a href="{{ route('admin.dataPelanggan') }}"
+                    class="nav-link {{ request()->routeIs('admin.dataPelanggan') ? 'active' : '' }}">
+                    <i class="far fa-circle nav-icon"></i>
+                    <p>Data Pelanggan</p>
                   </a>
                 </li>
                 <li class="nav-item {{ request()->routeIs('admin.listTransaksi') ? 'active' : '' }}">

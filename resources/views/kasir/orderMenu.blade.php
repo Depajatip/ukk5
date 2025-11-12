@@ -416,7 +416,7 @@ $('#place-order').on('click', function() {
         url: "{{ route('kasir.orderMenu.store') }}",
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // ✅ Ini wajib!
         },
         data: {
             namaPelanggan: name,
@@ -447,6 +447,7 @@ $('#place-order').on('click', function() {
             }
         },
         error: function(xhr) {
+            console.log(xhr); // 👈 Tambahkan ini untuk debug
             alert('Terjadi kesalahan: ' + xhr.responseJSON?.error || 'Coba lagi nanti.');
         }
     });

@@ -56,7 +56,6 @@ class OrderMenuController extends Controller
             $penjualan = Penjualan::create([
                 'pelangganID' => $pelanggan->pelangganID,
                 'totalHarga' => $totalHarga,
-                'tanggalPenjualan' => now(),
             ]);
 
             // 4. Simpan detail penjualan & kurangi stock
@@ -86,7 +85,7 @@ class OrderMenuController extends Controller
                 'success' => true,
                 'message' => 'Order berhasil disimpan!',
                 'penjualanID' => $penjualan->penjualanID,
-                'redirect' => route('penjualan.list') // redirect ke list pesanan
+                'redirect' => route('kasir.orderMenu') 
             ]);
 
         } catch (\Exception $e) {

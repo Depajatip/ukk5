@@ -1,13 +1,13 @@
-@extends('layouts.kasirlayout')
+@extends('layouts.adminlte')
 
-@section('title', 'listPesanan')
+@section('title', 'Data Pelanggan')
 
 @section('content')
 <div class="content-header">
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">list Pesanan</h1>
+                <h1 class="m-0">Data Pelanggan</h1>
             </div>
         </div>
     </div>
@@ -36,7 +36,7 @@
                     <div class="col-md-4">
                         <div class="card p-3 text-center"
                             style="height: 150px; align-items: center; justify-content: center;">
-                            <h3>Total gagal</h3>
+                            <h3>dummy</h3>
                             <h4>dummy -</h4>
                         </div>
                     </div>
@@ -53,27 +53,24 @@
                             <tr>
                                 <th class="text-center">ID</th>
                                 <th>Nama Pelanggan</th>
-                                <th>Waktu Pemesanan</th>
-                                <th>Total Harga</th>
-                                <th>Status</th>
+                                <th>Alamat</th>
+                                <th>No Telep</th>
+                                <th>Waktu Pembelian</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($penjualans as $penjualan)
+                            @forelse($pelanggans as $pelanggan)
                             <tr>
-                                <td>{{ $penjualan->penjualanID }}</td>
-                                <td>{{ $penjualan->pelanggan->namaPelanggan ?? '-' }}</td>
-                                <td>{{ $penjualan->created_at->format('H:i:s') }}</td>
-                                <td>Rp {{ number_format($penjualan->totalHarga, 0, ',', '.') }}</td>
+                                <td>{{ $pelanggan->pelangganID }}</td>
+                                <td>{{ $pelanggan->namaPelanggan }}</td>
+                                <td>{{ $pelanggan->alamat }}</td>
+                                <td>{{ $pelanggan->noTelpPelanggan }}</td>
+                                <td>{{ $pelanggan->created_at->format('d M Y, h:i') }}</td>
                                 <td>
-                                    <span class="badge bg-success">Pending</span>
-                                    {{-- Nanti: <span class="badge bg-warning">Pending</span> --}}
-                                </td>
-                                <td>
-                                    <a
-                                        class="btn btn-sm btn-info payment-btn">
-                                        <i class="fas fa-wallet"></i> Payment
+                                    <a href="{{ route('admin.dataPelanggan', $pelanggan->pelangganID) }}"
+                                        class="btn btn-sm btn-info">
+                                        <i class="fas fa-eye"></i> Detail
                                     </a>
                                 </td>
                             </tr>
@@ -88,46 +85,11 @@
             </div>
         </div>
     </div>
-    <!-- Modal Edit User -->
-    <div class="modal fade" id="paymentMdal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-custom">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Payment Menu</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-
-                <form id="" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <div class="modal-body">
-                       <h5>payment order on progres...</h5> 
-                    </div>
-                
-                    <div class="modal-footer d-flex justify-content-between">
-                        <button type="button" class="btn btn-danger flex-fill me-2" data-dismiss="modal">
-                            Membatalkan
-                        </button>
-                        <button type="submit" class="btn btn-success flex-fill" disabled>
-                            Simpan Perubahan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
     @push('scripts')
     <script>
         $(document).ready(function() {
             $('#users-table').DataTable({
 
-            });
-
-            $('.payment-btn').on('click', function() {
-
-                $('#paymentMdal').modal('show');
             });
         });
     </script>

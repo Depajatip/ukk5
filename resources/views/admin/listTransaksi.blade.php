@@ -7,7 +7,7 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1 class="m-0">List Pelanggan</h1>
+                <h1 class="m-0">List Transaksi</h1>
             </div>
         </div>
     </div>
@@ -19,8 +19,7 @@
             <div class="col-lg-3 col-6">
                 <div class="small-box bg-info">
                     <div class="inner">
-                        <h3>150</h3>
-                        <p>Pengguna</p>
+                        <p>On Progress...</p>
                     </div>
                     <div class="icon">
                         <i class="fas fa-users"></i>

@@ -5,10 +5,12 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\admin\TransaksiController as AdminTransaksiController;
+use App\Http\Controllers\admin\DataPelangganController as AdminDataPelangganController;
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
 use App\Http\Controllers\Kasir\OrderMenuController as KasirorderMenuController;
 use App\Http\Controllers\Kasir\listPesananController as KasirlistPesananController;
 use App\Http\Controllers\Admin\ProductController;
+
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -52,8 +54,11 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/manageUser', [AdminDashboardController::class, 'manageUser'])
         ->name('admin.manageUser')
         ->middleware('role:admin');
-    Route::get('/admin/listPelanggan', [AdminDashboardController::class, 'listPelanggan'])
-        ->name('admin.listPelanggan')
+    Route::get('/admin/dataPelanggan', [AdminDataPelangganController::class, 'index'])
+        ->name('admin.dataPelanggan')
+        ->middleware('role:admin');
+    Route::get('/admin/dataPelanggan', [AdminDataPelangganController::class, 'dataPelanggan'])
+        ->name('admin.dataPelanggan')
         ->middleware('role:admin');
     Route::get('/admin/manageProduct', [AdminProductController::class, 'manageProduct'])
         ->name('admin.manageProduct')
@@ -90,4 +95,8 @@ Route::middleware(['auth'])->group(function () {
     ->middleware('role:cashier');
     Route::post('/kasir/orderMenu', [KasirorderMenuController::class, 'store'])
     ->name('kasir.orderMenu.store');
+    Route::get('/kasir/penjualan/{penjualanID}', function ($penjualanID) {
+    // Sementara: redirect ke list dulu
+    return redirect()->route('kasir.listPesanan')->with('warning', 'Fitur detail belum tersedia.');
+        })->name('penjualan.detail');
 });

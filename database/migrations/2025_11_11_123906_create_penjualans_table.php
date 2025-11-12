@@ -18,7 +18,7 @@ Schema::create('penjualans', function (Blueprint $table) {
           ->onDelete('restrict');
     $table->decimal('totalHarga', 12, 2);
     $table->dateTime('tanggalPenjualan')->useCurrent();
-    $table->timestamps();
+    // $table->timestamps();
 });
     }
 

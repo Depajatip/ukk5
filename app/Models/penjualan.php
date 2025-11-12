@@ -12,13 +12,12 @@ class Penjualan extends Model
     protected $fillable = [
         'pelangganID',
         'totalHarga',
-        'tanggalPenjualan'
     ];
 
-    public function pelanggan()
-    {
-        return $this->belongsTo(Pelanggan::class, 'pelangganID', 'pelangganID');
-    }
+public function pelanggan()
+{
+    return $this->belongsTo(\App\Models\Pelanggan::class, 'pelangganID', 'pelangganID');
+}
 
     public function details()
     {
