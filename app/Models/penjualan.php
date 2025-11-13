@@ -12,6 +12,11 @@ class Penjualan extends Model
     protected $fillable = [
         'pelangganID',
         'totalHarga',
+        'kodePesanan',
+        'status',
+        'diskon',
+        'uangBayar',
+        'kembalian',
     ];
 
 public function pelanggan()

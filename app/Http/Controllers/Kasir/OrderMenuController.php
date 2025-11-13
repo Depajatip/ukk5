@@ -22,7 +22,7 @@ class OrderMenuController extends Controller
 
         return view('kasir.orderMenu', compact('categories', 'products'));
     }
-    public function store(Request $request)
+public function store(Request $request)
     {
         // Validasi input
         $request->validate([
@@ -30,11 +30,10 @@ class OrderMenuController extends Controller
             'alamat' => 'required|string',
             'noTelpPelanggan' => 'required|string',
             'cart' => 'required|array|min:1',
-            'cart.*.id' => 'required|exists:products,produkID', // pastikan produk ada
+            'cart.*.id' => 'required|exists:products,produkID',
             'cart.*.quantity' => 'required|integer|min:1',
         ]);
 
-        // Mulai transaksi (agar rollback jika gagal)
         DB::beginTransaction();
 
         try {
@@ -52,25 +51,33 @@ class OrderMenuController extends Controller
                 $totalHarga += $product->harga * $item['quantity'];
             }
 
-            // 3. Simpan penjualan
+            $today = now()->toDateString();
+            $lastOrder = Penjualan::whereDate('created_at', $today)
+                ->whereNotNull('kodePesanan')
+                ->orderBy('penjualanID', 'desc')
+                ->first();
+
+            $sequence = $lastOrder ? (int)substr($lastOrder->kodePesanan, -3) + 1 : 1;
+            $kodePesanan = 'ORD-' . now()->format('Ymd') . '-' . str_pad($sequence, 3, '0', STR_PAD_LEFT);
+
+            // 4. Simpan penjualan
             $penjualan = Penjualan::create([
                 'pelangganID' => $pelanggan->pelangganID,
                 'totalHarga' => $totalHarga,
+                'kodePesanan' => $kodePesanan, 
+                'status' => 'pending',       
             ]);
 
-            // 4. Simpan detail penjualan & kurangi stock
+            // 5. Simpan detail penjualan & kurangi stock
             foreach ($request->cart as $item) {
                 $product = Product::findOrFail($item['id']);
 
-                // Cek stok cukup?
                 if ($product->stock < $item['quantity']) {
                     throw new \Exception("Stok tidak mencukupi untuk {$product->namaProduk}");
                 }
 
-                // Kurangi stock
                 $product->decrement('stock', $item['quantity']);
 
-                // Simpan detail
                 DetailPenjualan::create([
                     'penjualanID' => $penjualan->penjualanID,
                     'produkID' => $product->produkID,
@@ -83,9 +90,10 @@ class OrderMenuController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Order berhasil disimpan!',
+                'message' => 'Order berhasil!',
+                'kodePesanan' => $kodePesanan, // 👈 kirim ke frontend
                 'penjualanID' => $penjualan->penjualanID,
-                'redirect' => route('kasir.orderMenu') 
+                'redirect' => route('kasir.orderMenu'),
             ]);
 
         } catch (\Exception $e) {

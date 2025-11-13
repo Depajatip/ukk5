@@ -2,26 +2,17 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\ManageUserController as AdminManageUserController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
-use App\Http\Controllers\admin\TransaksiController as AdminTransaksiController;
+use App\Http\Controllers\admin\HistoryPesananController as AdminHistoryPesanan;
 use App\Http\Controllers\admin\DataPelangganController as AdminDataPelangganController;
+use App\Http\Controllers\admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Kasir\DashboardController as KasirDashboardController;
 use App\Http\Controllers\Kasir\OrderMenuController as KasirorderMenuController;
 use App\Http\Controllers\Kasir\listPesananController as KasirlistPesananController;
+use App\Http\Controllers\Kasir\PaymentController as KasirPaymentController;
 use App\Http\Controllers\Admin\ProductController;
 
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-// Route::get('/', function () {
-//     if (Auth::check()) {
-//         return redirect()->route('dashboard'); // atau admin/kasir sesuai role
-//     }
-//     return redirect()->route('login');
-// });
 
 Route::get('/', function () {
     if (!Auth::check()) {
@@ -34,10 +25,6 @@ Route::get('/', function () {
         : redirect()->route('kasir.dashboard');
 });
 
-// Route::get('/dashboard', function () {
-//     return view('dashboard');
-// })->middleware(['auth', 'verified'])->name('dashboard');
-
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -46,12 +33,14 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__ . '/auth.php';
 
-// Dashboard berdasarkan role
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminDashboardController::class, 'index'])
         ->name('admin.dashboard')
         ->middleware('role:admin');
-    Route::get('/admin/manageUser', [AdminDashboardController::class, 'manageUser'])
+    Route::get('/admin/dashboard/data', [AdminDashboardController::class, 'data'])
+        ->name('admin.dashboard.data')
+        ->middleware('role:admin');
+    Route::get('/admin/manageUser', [AdminManageUserController::class, 'manageUser'])
         ->name('admin.manageUser')
         ->middleware('role:admin');
     Route::get('/admin/dataPelanggan', [AdminDataPelangganController::class, 'index'])
@@ -63,9 +52,6 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/manageProduct', [AdminProductController::class, 'manageProduct'])
         ->name('admin.manageProduct')
         ->middleware('role:admin');
-    Route::get('/admin/listTransaksi', [AdminTransaksiController::class, 'listTransaksi'])
-        ->name('admin.listTransaksi')
-        ->middleware('role:admin');
     Route::post('/admin/products', [AdminProductController::class, 'store'])
         ->name('admin.products.store');
 
@@ -74,13 +60,13 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/admin/products/{id}', [ProductController::class, 'update'])->name('admin.product.update');
 
-    Route::get('/admin/user/{id}/edit', [AdminDashboardController::class, 'editUser'])
+    Route::get('/admin/user/{id}/edit', [AdminManageUserController::class, 'editUser'])
         ->name('admin.user.edit');
-    Route::delete('/admin/user/{id}', [AdminDashboardController::class, 'destroyUser'])
+    Route::delete('/admin/user/{id}', [AdminManageUserController::class, 'destroyUser'])
         ->name('admin.user.destroy');
-    Route::post('/admin/user', [AdminDashboardController::class, 'storeUser'])
+    Route::post('/admin/user', [AdminManageUserController::class, 'storeUser'])
         ->name('admin.user.store');
-    Route::put('/admin/user/{id}', [AdminDashboardController::class, 'updateUser'])
+    Route::put('/admin/user/{id}', [AdminManageUserController::class, 'updateUser'])
         ->name('admin.user.update');
     // Route::get('/admin/products', [ProductController::class, 'index'])
     //     ->name('admin.products.index');
@@ -99,4 +85,20 @@ Route::middleware(['auth'])->group(function () {
     // Sementara: redirect ke list dulu
     return redirect()->route('kasir.listPesanan')->with('warning', 'Fitur detail belum tersedia.');
         })->name('penjualan.detail');
+
+    // History pesanan (status: paid, cancelled)
+Route::get('/admin/historyPesanan', [AdminHistoryPesanan::class, 'index'])
+    ->name('admin.historyPesanan')
+->middleware('role:admin');
+Route::get('/admin/historyPesanan/{penjualanID}', [AdminHistoryPesanan::class, 'show'])
+    ->name('admin.pesanan.show')
+->middleware('role:admin');
+
+// Ambil data pesanan untuk modal payment
+Route::get('/kasir/pesanan/{penjualanID}', [KasirPaymentController::class, 'show'])
+    ->name('kasir.pesanan.show');
+
+// Proses pembayaran
+Route::post('/kasir/pesanan/{penjualanID}/bayar', [KasirPaymentController::class, 'bayar'])
+    ->name('kasir.pesanan.bayar');
 });

@@ -337,8 +337,8 @@
     <script>
         let currentFormId = null;
 
-        function openDeleteModal(productId) {
-            currentFormId = 'deleteProductForm' + productId; // simpan form yang akan di-submit
+        function openDeleteModal(produkID) {
+            currentFormId = 'deleteProductForm' + produkID; // simpan form yang akan di-submit
             var modal = new bootstrap.Modal(document.getElementById('deleteConfirmModal'));
             modal.show();
         }

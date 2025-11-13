@@ -1,82 +1,103 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Penjualan;
+use App\Models\Product;
+use App\Models\DetailPenjualan;
 use Illuminate\Http\Request;
-use App\Models\User;
-use Illuminate\Support\Facades\Hash;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-    public function index()
+        public function index()
     {
         return view('admin.dashboard');
     }
 
-    public function manageUser()
+    public function data(Request $request)
     {
-        $totalUser = User::count();
-        $totalAdmin = User::where('role', 'admin')->count();
-        $totalCashier = User::where('role', 'cashier')->count();
+        $start = $end = now();
+        
+        if ($request->has('days')) {
+            $days = $request->days;
+            $start = $days == 0 
+                ? now()->startOfDay() 
+                : now()->subDays($days)->startOfDay();
+        } elseif ($request->has('start') && $request->has('end')) {
+            $start = Carbon::parse($request->start)->startOfDay();
+            $end = Carbon::parse($request->end)->endOfDay();
+        }
+$paidOrdersQuery = Penjualan::where('status', 'paid')
+    ->whereBetween('created_at', [$start, $end]);
+        // Statistik
+$paidOrderIds = $paidOrdersQuery->pluck('penjualanID');
 
-        $users = User::all(); // atau sesuaikan dengan kebutuhan
+$stats = [
+    'totalPendapatan' => $paidOrdersQuery->sum('totalHarga'),
+    'totalTransaksi' => $paidOrderIds->count(),
+    'totalProdukTerjual' => DetailPenjualan::whereIn('penjualanID', $paidOrderIds)
+        ->sum('jumlahProduk'),
+];
 
-        return view('admin.manageUser', compact('users', 'totalUser', 'totalAdmin', 'totalCashier'));
-    }
-    // public function manageProduct()
-    // {
-    //     return view('admin.manageProduct');
-    // }
-    public function editUser($id)
-    {
-        $user = User::findOrFail($id);
-        return view('admin.manageUser', compact('user'));
-    }
+        // Grafik: 7 hari terakhir (default)
+        $chartStart = now()->subDays(6)->startOfDay();
+        $chartEnd = now()->endOfDay();
+        $labels = [];
+        $values = [];
 
-    public function destroyUser($id)
-    {
-        User::findOrFail($id)->delete();
-        return redirect()->route('admin.manageUser')->with('success', 'User berhasil dihapus');
-    }
-    public function storeUser(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-            'role' => 'required|in:admin,cashier',
-        ]);
-
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-
-        return redirect()->route('admin.manageUser')->with('success', 'User berhasil ditambahkan!');
-    }
-    public function updateUser(Request $request, $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $id,
-            'role' => 'required|in:admin,cashier',
-            'password' => 'nullable|string|min:6',
-        ]);
-
-        $user = User::findOrFail($id);
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->role = $request->role;
-
-        if ($request->password) {
-            $user->password = Hash::make($request->password);
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i)->startOfDay();
+            $labels[] = $date->format('d M');
+            $values[] = Penjualan::where('status', 'paid')
+                ->whereDate('created_at', $date)
+                ->sum('totalHarga');
         }
 
-        $user->save();
+        // Produk terlaris
+$topProducts = DetailPenjualan::selectRaw('products.namaProduk, SUM(jumlahProduk) as totalTerjual, SUM(subTotal) as revenue')
+    ->join('products', 'detailPenjualans.produkID', '=', 'products.produkID')
+    ->whereIn('detailPenjualans.penjualanID', $paidOrderIds)
+    ->groupBy('products.produkID', 'products.namaProduk') // ✅ Tambahkan namaProduk di sini!
+    ->orderByDesc('totalTerjual')
+    ->limit(5)
+    ->get();
 
-        return redirect()->route('admin.manageUser')->with('success', 'User berhasil diperbarui!');
+        // Stok menipis
+        $lowStock = Product::where('stock', '<=', 5)
+            ->where('stock', '>', 0)
+            ->select('namaProduk', 'stock')
+            ->get();
+
+        $lowStockCount = Product::where('stock', '<=', 0)->count() + $lowStock->count();
+
+        // Transaksi terbaru
+        $recentTransactions = Penjualan::with('pelanggan')
+            ->whereIn('status', ['paid', 'pending'])
+            ->latest('created_at')
+            ->limit(5)
+            ->get()
+            ->map(function ($t) {
+                return [
+                    'kodePesanan' => $t->kodePesanan,
+                    'namaPelanggan' => $t->pelanggan->namaPelanggan,
+                    'waktu' => $t->created_at->format('d/m H:i'),
+                    'totalHarga' => $t->totalHarga,
+                    'status' => $t->status,
+                ];
+            });
+
+        return response()->json([
+            'stats' => $stats,
+            'salesData' => [
+                'labels' => $labels,
+                'values' => $values,
+            ],
+            'topProducts' => $topProducts,
+            'lowStock' => $lowStock,
+            'lowStockCount' => $lowStockCount,
+            'recentTransactions' => $recentTransactions,
+        ]);
     }
 }

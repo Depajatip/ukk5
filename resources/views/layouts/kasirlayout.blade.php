@@ -17,6 +17,9 @@
   <!-- Bootstrap 5
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
+  <!-- SweetAlert2 -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
   <style>
     .content-wrapper {
       max-height: calc(100vh - 56px);

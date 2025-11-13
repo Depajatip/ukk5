@@ -151,11 +151,11 @@
 <script>
     let cart = [];
 
-    // ✅ Update UI stock berdasarkan productId & newStock
-    function updateProductStockUI(productId, newStock) {
-        const $card = $(`.product-item[data-id="${productId}"]`);
+    // ✅ Update UI stock berdasarkan produkID & newStock
+    function updateProductStockUI(produkID, newStock) {
+        const $card = $(`.product-item[data-id="${produkID}"]`);
         if ($card.length === 0) {
-            console.warn(`Product card with id=${productId} not found!`);
+            console.warn(`Product card with id=${produkID} not found!`);
             return;
         }
 
@@ -382,7 +382,12 @@ $(document).on('click', '.remove-btn', function(e) {
     });
 $('#place-order').on('click', function() {
     if (cart.length === 0) {
-        alert('Keranjang kosong!');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Keranjang Kosong!',
+            text: 'Tambahkan produk terlebih dahulu.',
+            confirmButtonText: 'OK'
+        });
         return;
     }
 
@@ -391,32 +396,49 @@ $('#place-order').on('click', function() {
     const addr = $('#customer-address').val().trim();
 
     if (!name || !phone || !addr) {
-        alert('Silakan isi semua data pelanggan!');
+        Swal.fire({
+            icon: 'warning',
+            title: 'Data Belum Lengkap!',
+            text: 'Silakan isi nama, no telp, dan alamat pelanggan.',
+            confirmButtonText: 'OK'
+        });
         return;
     }
 
-    // ✅ Validasi stock akhir (opsional tapi direkomendasikan)
+    // ✅ Validasi stock akhir
     let stockIssues = [];
     cart.forEach(item => {
         const $badge = $(`.product-item[data-id="${item.id}"] .stock-badge`);
         const currentStock = parseInt($badge.text().match(/\d+/)?.[0] || 0);
-        if (currentStock < 0) { // karena kita kurangi real-time, <0 = over-order
+        if (currentStock < 0) {
             const productName = $(`.product-item[data-id="${item.id}"]`).data('name');
             stockIssues.push(productName);
         }
     });
 
     if (stockIssues.length > 0) {
-        alert(`Stok tidak mencukupi untuk: ${stockIssues.join(', ')}`);
+        Swal.fire({
+            icon: 'error',
+            title: 'Stok Tidak Mencukupi!',
+            html: `Produk habis: <strong>${stockIssues.join(', ')}</strong>`,
+            confirmButtonText: 'Perbaiki Keranjang'
+        });
         return;
     }
 
-    // ✅ Kirim data ke backend
+    // ✅ Loading state
+    Swal.fire({
+        title: 'Memproses...',
+        html: 'Menyimpan pesanan',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+    });
+
     $.ajax({
         url: "{{ route('kasir.orderMenu.store') }}",
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // ✅ Ini wajib!
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
         },
         data: {
             namaPelanggan: name,
@@ -429,26 +451,41 @@ $('#place-order').on('click', function() {
         },
         success: function(res) {
             if (res.success) {
-                // ✅ Tampilkan modal sukses
-                const successModal = new bootstrap.Modal(document.getElementById('successModal'));
-                successModal.show();
-
-                // Reset setelah modal ditutup
-                $('#successModal').one('hidden.bs.modal', function () {
+                // ✅ Hanya tampilkan centang + "Order Success"
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Order Success!',
+                    showConfirmButton: false,
+                    timer: 1500,
+                    timerProgressBar: true,
+                    didOpen: () => {
+                        Swal.hideLoading();
+                    }
+                }).then(() => {
+                    // Reset keranjang & form
                     cart = [];
                     updateCart();
                     $('#customer-name, #customer-phone, #customer-address').val('');
                     
-                    // Redirect ke halaman list pesanan
+                    // Redirect ke list pesanan
                     window.location.href = res.redirect;
                 });
             } else {
-                alert('Gagal menyimpan order: ' + res.error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: res.error || 'Gagal menyimpan order.',
+                    confirmButtonText: 'OK'
+                });
             }
         },
         error: function(xhr) {
-            console.log(xhr); // 👈 Tambahkan ini untuk debug
-            alert('Terjadi kesalahan: ' + xhr.responseJSON?.error || 'Coba lagi nanti.');
+            Swal.fire({
+                icon: 'error',
+                title: 'Error!',
+                html: `<pre>${xhr.responseJSON?.error || 'Terjadi kesalahan. Coba lagi.'}</pre>`,
+                confirmButtonText: 'Tutup'
+            });
         }
     });
 });
