@@ -101,4 +101,7 @@ Route::get('/kasir/pesanan/{penjualanID}', [KasirPaymentController::class, 'show
 // Proses pembayaran
 Route::post('/kasir/pesanan/{penjualanID}/bayar', [KasirPaymentController::class, 'bayar'])
     ->name('kasir.pesanan.bayar');
+
+    Route::post('/kasir/pesanan/{penjualanID}/cancel', [KasirPaymentController::class, 'cancel'])
+    ->name('kasir.pesanan.cancel');
 });
