@@ -59,6 +59,6 @@ class AuthenticatedSessionController extends Controller
             return redirect()->intended('/kasir/dashboard');
         }
 
-        return redirect()->intended('/'); // fallback
+        return redirect()->intended('/');
     }
 }

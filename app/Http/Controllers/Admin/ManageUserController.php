@@ -19,10 +19,7 @@ class ManageUserController extends Controller
 
         return view('admin.manageUser', compact('users', 'totalUser', 'totalAdmin', 'totalCashier'));
     }
-    // public function manageProduct()
-    // {
-    //     return view('admin.manageProduct');
-    // }
+
     public function editUser($id)
     {
         $user = User::findOrFail($id);

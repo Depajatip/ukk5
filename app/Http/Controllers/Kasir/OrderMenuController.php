@@ -22,7 +22,7 @@ class OrderMenuController extends Controller
 
         return view('kasir.orderMenu', compact('categories', 'products'));
     }
-public function store(Request $request)
+    public function store(Request $request)
     {
         // Validasi input
         $request->validate([
@@ -64,8 +64,8 @@ public function store(Request $request)
             $penjualan = Penjualan::create([
                 'pelangganID' => $pelanggan->pelangganID,
                 'totalHarga' => $totalHarga,
-                'kodePesanan' => $kodePesanan, 
-                'status' => 'pending',       
+                'kodePesanan' => $kodePesanan,
+                'status' => 'pending',
             ]);
 
             // 5. Simpan detail penjualan & kurangi stock
@@ -95,7 +95,6 @@ public function store(Request $request)
                 'penjualanID' => $penjualan->penjualanID,
                 'redirect' => route('kasir.orderMenu'),
             ]);
-
         } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
@@ -104,5 +103,4 @@ public function store(Request $request)
             ], 500);
         }
     }
-
 }

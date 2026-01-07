@@ -11,7 +11,7 @@ use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
-        public function index()
+    public function index()
     {
         return view('admin.dashboard');
     }
@@ -19,27 +19,27 @@ class DashboardController extends Controller
     public function data(Request $request)
     {
         $start = $end = now();
-        
+
         if ($request->has('days')) {
             $days = $request->days;
-            $start = $days == 0 
-                ? now()->startOfDay() 
+            $start = $days == 0
+                ? now()->startOfDay()
                 : now()->subDays($days)->startOfDay();
         } elseif ($request->has('start') && $request->has('end')) {
             $start = Carbon::parse($request->start)->startOfDay();
             $end = Carbon::parse($request->end)->endOfDay();
         }
-$paidOrdersQuery = Penjualan::where('status', 'paid')
-    ->whereBetween('created_at', [$start, $end]);
+        $paidOrdersQuery = Penjualan::where('status', 'paid')
+            ->whereBetween('created_at', [$start, $end]);
         // Statistik
-$paidOrderIds = $paidOrdersQuery->pluck('penjualanID');
+        $paidOrderIds = $paidOrdersQuery->pluck('penjualanID');
 
-$stats = [
-    'totalPendapatan' => $paidOrdersQuery->sum('totalHarga'),
-    'totalTransaksi' => $paidOrderIds->count(),
-    'totalProdukTerjual' => DetailPenjualan::whereIn('penjualanID', $paidOrderIds)
-        ->sum('jumlahProduk'),
-];
+        $stats = [
+            'totalPendapatan' => $paidOrdersQuery->sum('totalHarga'),
+            'totalTransaksi' => $paidOrderIds->count(),
+            'totalProdukTerjual' => DetailPenjualan::whereIn('penjualanID', $paidOrderIds)
+                ->sum('jumlahProduk'),
+        ];
 
         // Grafik: 7 hari terakhir (default)
         $chartStart = now()->subDays(6)->startOfDay();
@@ -56,13 +56,13 @@ $stats = [
         }
 
         // Produk terlaris
-$topProducts = DetailPenjualan::selectRaw('products.namaProduk, SUM(jumlahProduk) as totalTerjual, SUM(subTotal) as revenue')
-    ->join('products', 'detailPenjualans.produkID', '=', 'products.produkID')
-    ->whereIn('detailPenjualans.penjualanID', $paidOrderIds)
-    ->groupBy('products.produkID', 'products.namaProduk') // ✅ Tambahkan namaProduk di sini!
-    ->orderByDesc('totalTerjual')
-    ->limit(5)
-    ->get();
+        $topProducts = DetailPenjualan::selectRaw('products.namaProduk, SUM(jumlahProduk) as totalTerjual, SUM(subTotal) as revenue')
+            ->join('products', 'detailPenjualans.produkID', '=', 'products.produkID')
+            ->whereIn('detailPenjualans.penjualanID', $paidOrderIds)
+            ->groupBy('products.produkID', 'products.namaProduk') // ✅ Tambahkan namaProduk di sini!
+            ->orderByDesc('totalTerjual')
+            ->limit(5)
+            ->get();
 
         // Stok menipis
         $lowStock = Product::where('stock', '<=', 5)
