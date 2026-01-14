@@ -19,6 +19,32 @@ scratch. This page gets rid of all links and provides the needed markup only.
   <link rel="stylesheet" href="{{ asset('adminlte') }}/dist/css/adminlte.min.css">
   <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"> -->
 
+  <style>
+    .main-sidebar {
+      background-color: #1b263b !important;
+    }
+    .main-header {
+      background-color: #1b263b !important;
+    }
+    .main-header .nav-link
+    { color: white !important;
+    }
+    .main-sidebar .brand-link,
+    .main-sidebar .nav-link,
+    .main-sidebar .nav-link i,
+    .main-sidebar p {
+      color: white !important;
+    }
+    .nav-link.active {
+      background-color: #ff9900 !important;
+      color: white !important;
+    }
+    table.dataTable thead th {
+    background-color: #b0c4b1;
+    color: #ffffff;
+}
+  </style>
+
   <!-- @vite('resources/js/app.js') -->
 </head>
 
@@ -104,7 +130,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <!-- /.navbar -->
 
     <!-- Main Sidebar Container -->
-    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <aside class="main-sidebar elevation-4">
       <!-- Brand Logo -->
       <a href="dashboard" class="brand-link text-center">
         <!-- <img src="public/adminlte/dist/img/AdminLTELogo.png" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8"> -->
@@ -119,13 +145,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
             <li class="nav-item {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
               <a href="{{ route('admin.dashboard') }}"
                 class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}">
-                <i class="far fa-circle nav-icon"></i>
+                <i class="fas fa-home nav-icon"></i>
                 <p>Dashboard</p>
               </a>
             </li>
             <li class="nav-item menu-open">
-              <a href="#" class="nav-link active">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
+              <a href="#" class="nav-link">
+                <!-- <i class="nav-icon fas fa-tachometer-alt"></i> -->
                 <p>
                   Admin Menu
                   <i class="right fas fa-angle-left"></i>
@@ -135,28 +161,28 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 <li class="nav-item {{ request()->routeIs('admin.manageUser') ? 'active' : '' }}">
                   <a href="{{ route('admin.manageUser') }}"
                     class="nav-link {{ request()->routeIs('admin.manageUser') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
+                    <i class="fas fa-user-edit pl-2"></i>
                     <p>Manage User</p>
-                  </a>
-                </li>
-                <li class="nav-item {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
-                  <a href="{{ route('admin.manageProduct') }}"
-                    class="nav-link {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
-                    <p>Manage Product</p>
                   </a>
                 </li>
                 <li class="nav-item {{ request()->routeIs('admin.dataPelanggan') ? 'active' : '' }}">
                   <a href="{{ route('admin.dataPelanggan') }}"
                     class="nav-link {{ request()->routeIs('admin.dataPelanggan') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
+                    <i class="far fa-user nav-icon"></i>
                     <p>Data Pelanggan</p>
+                  </a>
+                </li>
+                <li class="nav-item {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
+                  <a href="{{ route('admin.manageProduct') }}"
+                    class="nav-link {{ request()->routeIs('admin.manageProduct') ? 'active' : '' }}">
+                    <i class="fas fa-tasks nav-icon"></i>
+                    <p>Manage Product</p>
                   </a>
                 </li>
                 <li class="nav-item {{ request()->routeIs('admin.historyPesanan') ? 'active' : '' }}">
                   <a href="{{ route('admin.historyPesanan') }}"
                     class="nav-link {{ request()->routeIs('admin.historyPesanan') ? 'active' : '' }}">
-                    <i class="far fa-circle nav-icon"></i>
+                    <i class="fas fa-history nav-icon"></i>
                     <p>Riwayat Transaksi</p>
                   </a>
                 </li>

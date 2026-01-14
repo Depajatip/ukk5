@@ -24,10 +24,8 @@
                             <tr>
                                 <th class="text-center">ID</th>
                                 <th>Nama Pelanggan</th>
+                                <th class="text-center">No Telep</th>
                                 <th>Alamat</th>
-                                <th>No Telep</th>
-                                <th>Waktu Pembelian</th>
-                                <th>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -35,15 +33,8 @@
                             <tr>
                                 <td>{{ $pelanggan->pelangganID }}</td>
                                 <td>{{ $pelanggan->namaPelanggan }}</td>
+                                <td class="text-center">{{ $pelanggan->noTelpPelanggan }}</td>
                                 <td>{{ $pelanggan->alamat }}</td>
-                                <td>{{ $pelanggan->noTelpPelanggan }}</td>
-                                <td>{{ $pelanggan->created_at->format('d M Y, h:i') }}</td>
-                                <td>
-                                    <button href="{{ route('admin.dataPelanggan', $pelanggan->pelangganID) }}"
-                                        class="btn btn-sm btn-info" disabled>
-                                        <i class="fas fa-eye"></i> Detail
-                                    </button>
-                                </td>
                             </tr>
                             @empty
                             <tr>

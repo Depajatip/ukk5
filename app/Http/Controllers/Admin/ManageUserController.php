@@ -9,15 +9,23 @@ use Illuminate\Support\Facades\Hash;
 
 class ManageUserController extends Controller
 {
-    public function manageUser()
+    public function manageUser(Request $request)
     {
         $totalUser = User::count();
         $totalAdmin = User::where('role', 'admin')->count();
         $totalCashier = User::where('role', 'cashier')->count();
 
-        $users = User::all(); // atau sesuaikan dengan kebutuhan
+        $filter = $request->get('filter', 'all');
 
-        return view('admin.manageUser', compact('users', 'totalUser', 'totalAdmin', 'totalCashier'));
+        if ($filter === 'admin') {
+            $users = User::where('role', 'admin')->get();
+        } elseif ($filter === 'cashier') {
+            $users = User::where('role', 'cashier')->get();
+        } else {
+            $users = User::all();
+        }
+
+        return view('admin.manageUser', compact('users', 'totalUser', 'totalAdmin', 'totalCashier', 'filter'));
     }
 
     public function editUser($id)

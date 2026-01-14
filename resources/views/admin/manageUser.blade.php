@@ -55,7 +55,18 @@
                 </div>
             </div>
 
-            <!-- Kolom 3: DataTable -->
+            <!-- Kolom 3: Filter Buttons -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="d-flex" style="gap: 12px;">
+                        <a href="{{ route('admin.manageUser', ['filter' => 'cashier']) }}" class="btn btn-success {{ $filter === 'cashier' ? 'active' : '' }}" style="width: 100px;">Cashier</a>
+                        <a href="{{ route('admin.manageUser', ['filter' => 'admin']) }}" class="btn btn-warning  {{ $filter === 'admin' ? 'active' : '' }}" style="width: 100px;">Admin</a>
+                        <a href="{{ route('admin.manageUser', ['filter' => 'all']) }}" class="btn btn-secondary {{ $filter === 'all' ? 'active' : '' }}" style="width: 100px;">All</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kolom 4: DataTable -->
             <div class="row">
                 <div class="col-12">
                     <div class="table-section">
