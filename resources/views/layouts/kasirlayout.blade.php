@@ -57,6 +57,30 @@
     body {
       height: 100%;
     }
+
+        .main-sidebar {
+      background-color: #1b263b !important;
+    }
+    .main-header {
+      background-color: #1b263b !important;
+    }
+    .main-header .nav-link
+    { color: white !important;
+    }
+    .main-sidebar .brand-link,
+    .main-sidebar .nav-link,
+    .main-sidebar .nav-link i,
+    .main-sidebar p {
+      color: white !important;
+    }
+    .nav-link.active {
+      background-color: #ff9900 !important;
+      color: white !important;
+    }
+    table.dataTable thead th {
+    background-color: #b0c4b1;
+    color: #ffffff;
+}
   </style>
 </head>
 
@@ -142,8 +166,8 @@
         <nav class="mt-2">
           <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
             <li class="nav-item menu-open">
-              <a href="#" class="nav-link active">
-                <i class="nav-icon fas fa-tachometer-alt"></i>
+              <a href="#" class="nav-link">
+                <i class="nav-icon"></i>
                 <p>
                   Cashier Menu
                   <i class="right fas fa-angle-left"></i>

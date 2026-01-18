@@ -6,6 +6,35 @@
 <div class="container-fluid p-3">
     <h2>History Pesanan</h2>
 
+            <!-- Kolom 2: Card Statistik -->
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="card-section d-flex g-3">
+                        <div class="col-md-4">
+                            <div class="card p-3 text-center"
+                                style="height: 150px; align-items: center; justify-content: center;">
+                                <h3>Total Orders</h3>
+                                <h4>{{ $totalOrders }} -</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card p-3 text-center"
+                                style="height: 150px; align-items: center; justify-content: center;">
+                                <h3>Total Cancled</h3>
+                                <h4>{{ $totalCancled }} -</h4>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card p-3 text-center"
+                                style="height: 150px; align-items: center; justify-content: center;">
+                                <h3>Total Success</h3>
+                                <h4>{{ $totalSuccess }} -</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
     <div class="table-responsive">
         <table class="table table-bordered table-striped" id="historyTable">
             <thead>
@@ -70,14 +99,13 @@
                 <!-- Data Pelanggan -->
                 <div class="row mb-3">
                     <div class="col-md-6">
-                        <h6>Data Pelanggan</h6>
+                        <h4 class="font-weight-bold">Data Pelanggan</h4>
                         <p><strong>Nama:</strong> <span id="d_namaPelanggan">-</span></p>
                         <p><strong>Alamat:</strong> <span id="d_alamatPelanggan">-</span></p>
                         <p><strong>No Telp:</strong> <span id="d_noTelpPelanggan">-</span></p>
                     </div>
                     <div class="col-md-6">
-                        <h6>Informasi Pesanan</h6>
-                        <p><strong>Kode:</strong> <span id="d_kodePesanan" class="badge bg-primary">-</span></p>
+                        <h4 class="font-weight-bold">Informasi Pesanan</h4>
                         <p><strong>Waktu:</strong> <span id="d_waktuPesanan">-</span></p>
                         <p><strong>Total:</strong> <span id="d_totalHarga" class="fw-bold">Rp 0</span></p>
                         @if($penjualans->first()?->diskon)
@@ -170,7 +198,7 @@ $(document).ready(function() {
 
     // Inisialisasi DataTable (opsional)
     $('#historyTable').DataTable({
-        "pageLength": 10,
+        "pageLength": 8,
         "order": [[0, 'desc']]
     });
 });

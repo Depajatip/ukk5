@@ -101,7 +101,7 @@
     <script>
         $(document).ready(function() {
             $('#products-table').DataTable({
-
+                "pageLength": 8,
             });
         });
         $(document).ready(function() {

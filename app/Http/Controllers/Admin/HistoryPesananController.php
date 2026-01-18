@@ -12,12 +12,15 @@ class HistoryPesananController extends Controller
 {
     public function index()
     {
+        $totalOrders = Penjualan::count();
+        $totalCancled = Penjualan::where('status', 'cancelled')->count();
+        $totalSuccess = Penjualan::where('status', 'paid')->count();
 
         $penjualans = Penjualan::with('pelanggan')
         ->whereIn('status', ['paid', 'cancelled'])
         ->latest('created_at')
         ->get();
         // $transaksi = Product::all();
-        return view('admin.historyPesanan' , compact('penjualans'));
+        return view('admin.historyPesanan' , compact('penjualans', 'totalOrders', 'totalCancled', 'totalSuccess'));
     }
 }

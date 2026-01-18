@@ -16,33 +16,33 @@
 <section class="content">
     <div class="container-fluid">
         <!-- Kolom 2: Card Statistik -->
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="card-section d-flex g-3">
-            <div class="col-md-4">
-                <div class="card p-3 text-center"
-                    style="height: 150px; align-items: center; justify-content: center;">
-                    <h3>Total Transaksi</h3>
-                    <h4>{{ $stats['totalTransaksi'] }}</h4>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3 text-center"
-                    style="height: 150px; align-items: center; justify-content: center;">
-                    <h3>Total Pending</h3>
-                    <h4>{{ $stats['pending'] }}</h4>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card p-3 text-center"
-                    style="height: 150px; align-items: center; justify-content: center;">
-                    <h3>Total Cancelled</h3>
-                    <h4>{{ $stats['cancelled'] }}</h4>
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="card-section d-flex g-3">
+                    <div class="col-md-4">
+                        <div class="card p-3 text-center"
+                            style="height: 150px; align-items: center; justify-content: center;">
+                            <h3>Total Transaksi</h3>
+                            <h4>{{ $stats['totalTransaksi'] }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card p-3 text-center"
+                            style="height: 150px; align-items: center; justify-content: center;">
+                            <h3>Total Pending</h3>
+                            <h4>{{ $stats['pending'] }}</h4>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card p-3 text-center"
+                            style="height: 150px; align-items: center; justify-content: center;">
+                            <h3>Total Cancelled</h3>
+                            <h4>{{ $stats['cancelled'] }}</h4>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
         <!-- Kolom 3: DataTable -->
         <div class="row">
@@ -72,20 +72,20 @@
                                     <span class="badge bg-success">Pending</span>
                                     {{-- Nanti: <span class="badge bg-warning">Pending</span> --}}
                                 </td>
-<td>
-    <div class="btn-group" role="group">
-        <button class="btn btn-sm btn-info payment-btn"
-                data-id="{{ $penjualan->penjualanID }}"
-                data-kode="{{ $penjualan->kodePesanan }}">
-            <i class="fas fa-wallet"></i> Payment
-        </button>
-        <button class="btn btn-sm btn-danger cancel-btn"
-                data-id="{{ $penjualan->penjualanID }}"
-                data-kode="{{ $penjualan->kodePesanan }}">
-            <i class="fas fa-times"></i> Cancel
-        </button>
-    </div>
-</td>
+                                <td>
+                                    <div class="btn-group" role="group">
+                                        <button class="btn btn-sm btn-info payment-btn"
+                                            data-id="{{ $penjualan->penjualanID }}"
+                                            data-kode="{{ $penjualan->kodePesanan }}">
+                                            <i class="fas fa-wallet"></i> Payment
+                                        </button>
+                                        <button class="btn btn-sm btn-danger cancel-btn"
+                                            data-id="{{ $penjualan->penjualanID }}"
+                                            data-kode="{{ $penjualan->kodePesanan }}">
+                                            <i class="fas fa-times"></i> Cancel
+                                        </button>
+                                    </div>
+                                </td>
                             </tr>
                             @empty
                             <tr>
@@ -113,14 +113,13 @@
                     <!-- Data Pelanggan -->
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <h6>Data Pelanggan</h6>
+                            <h4 class="font-weight-bold">Data Pelanggan</h4>
                             <p><strong>Nama:</strong> <span id="namaPelanggan">-</span></p>
                             <p><strong>Alamat:</strong> <span id="alamatPelanggan">-</span></p>
                             <p><strong>No Telp:</strong> <span id="noTelpPelanggan">-</span></p>
                         </div>
                         <div class="col-md-6">
-                            <h6>Informasi Pesanan</h6>
-                            <p><strong>Kode:</strong> <span id="kodePesanan" class="badge bg-primary">-</span></p>
+                            <h4 class="font-weight-bold">Informasi Pesanan</h4>
                             <p><strong>Waktu:</strong> <span id="waktuPesanan">-</span></p>
                             <p><strong>Total:</strong> <span id="totalHarga" class="fw-bold">Rp 0</span></p>
                         </div>
@@ -418,46 +417,46 @@ ${'='.repeat(32)}
         });
 
         // Cancel pesanan
-$(document).on('click', '.cancel-btn', function() {
-    const id = $(this).data('id');
-    const kode = $(this).data('kode');
+        $(document).on('click', '.cancel-btn', function() {
+            const id = $(this).data('id');
+            const kode = $(this).data('kode');
 
-    Swal.fire({
-        title: 'Batalkan Pesanan?',
-        html: `Kode: <strong>${kode}</strong><br>Yakin ingin membatalkan?`,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Ya, Batalkan',
-        cancelButtonText: 'Batal',
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
             Swal.fire({
-                title: 'Memproses...',
-                html: 'Membatalkan pesanan',
-                allowOutsideClick: false,
-                didOpen: () => Swal.showLoading()
-            });
+                title: 'Batalkan Pesanan?',
+                html: `Kode: <strong>${kode}</strong><br>Yakin ingin membatalkan?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Batalkan',
+                cancelButtonText: 'Batal',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        html: 'Membatalkan pesanan',
+                        allowOutsideClick: false,
+                        didOpen: () => Swal.showLoading()
+                    });
 
-            $.post(`/kasir/pesanan/${id}/cancel`, {
-                _token: $('meta[name="csrf-token"]').attr('content')
-            })
-            .done(function(res) {
-                Swal.close();
-                if (res.success) {
-                    Swal.fire('Dibatalkan!', 'Pesanan berhasil dibatalkan.', 'success');
-                    location.reload(); // refresh statistik & tabel
-                } else {
-                    Swal.fire('Gagal!', res.error, 'error');
+                    $.post(`/kasir/pesanan/${id}/cancel`, {
+                            _token: $('meta[name="csrf-token"]').attr('content')
+                        })
+                        .done(function(res) {
+                            Swal.close();
+                            if (res.success) {
+                                Swal.fire('Dibatalkan!', 'Pesanan berhasil dibatalkan.', 'success');
+                                location.reload(); // refresh statistik & tabel
+                            } else {
+                                Swal.fire('Gagal!', res.error, 'error');
+                            }
+                        })
+                        .fail(function() {
+                            Swal.close();
+                            Swal.fire('Error!', 'Gagal membatalkan pesanan.', 'error');
+                        });
                 }
-            })
-            .fail(function() {
-                Swal.close();
-                Swal.fire('Error!', 'Gagal membatalkan pesanan.', 'error');
             });
-        }
-    });
-});
+        });
     </script>
 
     @endpush
